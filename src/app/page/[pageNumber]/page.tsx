@@ -205,6 +205,9 @@ export default function QuranPage() {
 
   return (
     <div className="relative min-h-screen bg-background overflow-hidden">
+      {/* Loading bar at top */}
+      {isAnimating && <div className="loading-bar" />}
+
       {/* Main Content */}
       <div
         className="flex items-center justify-center min-h-screen p-4 cursor-pointer book-container"

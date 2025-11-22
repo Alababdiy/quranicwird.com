@@ -147,6 +147,35 @@
   filter: invert(1);
 }
 
+/* Top loading bar */
+@keyframes loadingBar {
+  0% {
+    transform: translateX(-100%);
+  }
+  50% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.loading-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    hsl(var(--primary)),
+    transparent
+  );
+  z-index: 9999;
+  animation: loadingBar 1s ease-in-out infinite;
+}
+
 /* Two-page spread layout */
 .page-spread {
   display: grid;
