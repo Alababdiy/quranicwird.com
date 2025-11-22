@@ -1,21 +1,28 @@
 {
-  "name": "Quranic Wird",
+  "name": "Quranic Wird - تطبيق الورد القرآني",
   "short_name": "QuranicWird",
-  "description": "A modern Quran reading application",
+  "description": "تطبيق حديث لقراءة القرآن الكريم",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
+  "orientation": "portrait",
   "background_color": "#000000",
   "theme_color": "#000000",
+  "lang": "ar",
+  "dir": "rtl",
+  "categories": ["education", "lifestyle"],
   "icons": [
     {
       "src": "/logos/DarkBGLogo.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     },
     {
       "src": "/logos/DarkBGLogo.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     }
   ]
 }
