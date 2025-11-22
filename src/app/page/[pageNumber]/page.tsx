@@ -103,18 +103,22 @@ export default function QuranPage() {
         router.push(`/page/${pageNum}`);
         setFlipDirection(null);
         setIsAnimating(false);
-      }, 400);
+      }, 350);
     },
     [router, isAnimating]
   );
 
   const nextPage = useCallback(() => {
-    navigateToPage(currentPage + 1, "next");
-  }, [currentPage, navigateToPage]);
+    // In 2-page mode, jump by 2 pages
+    const increment = isWideScreen ? 2 : 1;
+    navigateToPage(currentPage + increment, "next");
+  }, [currentPage, isWideScreen, navigateToPage]);
 
   const previousPage = useCallback(() => {
-    navigateToPage(currentPage - 1, "prev");
-  }, [currentPage, navigateToPage]);
+    // In 2-page mode, jump by 2 pages
+    const decrement = isWideScreen ? 2 : 1;
+    navigateToPage(currentPage - decrement, "prev");
+  }, [currentPage, isWideScreen, navigateToPage]);
 
   // Keyboard navigation
   useEffect(() => {
@@ -278,11 +282,11 @@ export default function QuranPage() {
         )}
       </div>
 
-      {/* Navigation Arrows - Lower position */}
+      {/* Navigation Arrows - Bottom on mobile, lower third on desktop */}
       <button
         onClick={nextPage}
         disabled={currentPage >= TOTAL_PAGES || isAnimating}
-        className="fixed left-4 bottom-32 p-3 bg-background/80 backdrop-blur-sm rounded-full shadow-lg disabled:opacity-30 disabled:cursor-not-allowed hover:bg-accent transition-all z-20"
+        className="fixed left-4 bottom-4 md:bottom-32 p-3 bg-background/80 backdrop-blur-sm rounded-full shadow-lg disabled:opacity-30 disabled:cursor-not-allowed hover:bg-accent transition-all z-20"
         aria-label="Next page"
       >
         <ChevronLeft className="w-6 h-6" />
@@ -291,7 +295,7 @@ export default function QuranPage() {
       <button
         onClick={previousPage}
         disabled={currentPage <= 1 || isAnimating}
-        className="fixed right-4 bottom-32 p-3 bg-background/80 backdrop-blur-sm rounded-full shadow-lg disabled:opacity-30 disabled:cursor-not-allowed hover:bg-accent transition-all z-20"
+        className="fixed right-4 bottom-4 md:bottom-32 p-3 bg-background/80 backdrop-blur-sm rounded-full shadow-lg disabled:opacity-30 disabled:cursor-not-allowed hover:bg-accent transition-all z-20"
         aria-label="Previous page"
       >
         <ChevronRight className="w-6 h-6" />
