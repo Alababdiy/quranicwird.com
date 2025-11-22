@@ -125,8 +125,8 @@ export default function QuranPage() {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "ArrowRight" || e.key === "ArrowLeft") {
         e.preventDefault();
-        // In RTL: ArrowLeft goes to next page, ArrowRight goes to previous page
-        if (e.key === "ArrowLeft") {
+        // Standard web navigation: ArrowRight goes to next, ArrowLeft goes to previous
+        if (e.key === "ArrowRight") {
           nextPage();
         } else {
           previousPage();
@@ -152,13 +152,13 @@ export default function QuranPage() {
 
   const handleTouchEnd = () => {
     if (touchStart - touchEnd > 75) {
-      // Swipe left - next page (in RTL)
-      nextPage();
+      // Swipe left - previous page
+      previousPage();
     }
 
     if (touchStart - touchEnd < -75) {
-      // Swipe right - previous page (in RTL)
-      previousPage();
+      // Swipe right - next page
+      nextPage();
     }
   };
 
@@ -287,19 +287,19 @@ export default function QuranPage() {
 
       {/* Navigation Arrows - Bottom on mobile, lower third on desktop */}
       <button
-        onClick={nextPage}
-        disabled={currentPage >= TOTAL_PAGES || isAnimating}
+        onClick={previousPage}
+        disabled={currentPage <= 1 || isAnimating}
         className="fixed left-4 bottom-4 md:bottom-32 p-3 bg-background/80 backdrop-blur-sm rounded-full shadow-lg disabled:opacity-30 disabled:cursor-not-allowed hover:bg-accent transition-all z-20"
-        aria-label="Next page"
+        aria-label="Previous page"
       >
         <ChevronLeft className="w-6 h-6" />
       </button>
 
       <button
-        onClick={previousPage}
-        disabled={currentPage <= 1 || isAnimating}
+        onClick={nextPage}
+        disabled={currentPage >= TOTAL_PAGES || isAnimating}
         className="fixed right-4 bottom-4 md:bottom-32 p-3 bg-background/80 backdrop-blur-sm rounded-full shadow-lg disabled:opacity-30 disabled:cursor-not-allowed hover:bg-accent transition-all z-20"
-        aria-label="Previous page"
+        aria-label="Next page"
       >
         <ChevronRight className="w-6 h-6" />
       </button>

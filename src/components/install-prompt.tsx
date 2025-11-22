@@ -15,26 +15,37 @@ export function InstallPrompt() {
   const [isInstalled, setIsInstalled] = useState(false);
 
   useEffect(() => {
+    console.log("InstallPrompt: Initializing...");
+
     // Check if already installed
-    if (window.matchMedia("(display-mode: standalone)").matches) {
+    const isStandalone = window.matchMedia("(display-mode: standalone)").matches;
+    console.log("InstallPrompt: Is standalone?", isStandalone);
+
+    if (isStandalone) {
       setIsInstalled(true);
+      console.log("InstallPrompt: App already installed");
       return;
     }
 
     // Check if user previously dismissed the prompt
     const dismissed = localStorage.getItem("pwa-install-dismissed");
+    console.log("InstallPrompt: Was dismissed?", dismissed);
+
     if (dismissed === "true") {
+      console.log("InstallPrompt: User previously dismissed, not showing");
       return;
     }
 
     // Listen for the beforeinstallprompt event
     const handleBeforeInstallPrompt = (e: Event) => {
+      console.log("InstallPrompt: beforeinstallprompt event fired!");
       e.preventDefault();
       const promptEvent = e as BeforeInstallPromptEvent;
       setDeferredPrompt(promptEvent);
 
       // Show prompt after 3 seconds
       setTimeout(() => {
+        console.log("InstallPrompt: Showing prompt now");
         setShowPrompt(true);
       }, 3000);
     };
@@ -43,6 +54,7 @@ export function InstallPrompt() {
 
     // Listen for app installed event
     window.addEventListener("appinstalled", () => {
+      console.log("InstallPrompt: App installed!");
       setIsInstalled(true);
       setShowPrompt(false);
       setDeferredPrompt(null);

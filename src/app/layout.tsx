@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { InstallPrompt } from "@/components/install-prompt";
+import { InstallButton } from "@/components/install-button";
 import { IOSInstallPrompt } from "@/components/ios-install-prompt";
 
 export const metadata: Metadata = {
@@ -43,6 +44,7 @@ export default function RootLayout({
         >
           {children}
           <InstallPrompt />
+          <InstallButton />
           <IOSInstallPrompt />
         </ThemeProvider>
       </body>
