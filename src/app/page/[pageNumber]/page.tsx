@@ -103,7 +103,7 @@ export default function QuranPage() {
         router.push(`/page/${pageNum}`);
         setFlipDirection(null);
         setIsAnimating(false);
-      }, 800);
+      }, 400);
     },
     [router, isAnimating]
   );
@@ -170,6 +170,26 @@ export default function QuranPage() {
     setShowControls(!showControls);
   };
 
+  // Preload adjacent pages for smoother transitions
+  useEffect(() => {
+    const preloadImage = (pageNum: number) => {
+      if (pageNum >= 1 && pageNum <= TOTAL_PAGES) {
+        const img = document.createElement("img");
+        img.src = `/quran/${String(pageNum).padStart(3, "0")}.png`;
+      }
+    };
+
+    // Preload next and previous pages
+    preloadImage(currentPage - 1);
+    preloadImage(currentPage + 1);
+
+    // For wide screen, preload 2 more pages
+    if (isWideScreen) {
+      preloadImage(currentPage + 2);
+      preloadImage(currentPage - 2);
+    }
+  }, [currentPage, isWideScreen]);
+
   if (!mounted) {
     return null;
   }
@@ -190,13 +210,9 @@ export default function QuranPage() {
         onTouchEnd={handleTouchEnd}
       >
         {showTwoPages ? (
-          <div className="page-spread w-full px-8">
+          <div className="page-spread w-full px-8 page-fade-in">
             {/* Left Page */}
-            <div
-              className={`relative ${
-                flipDirection === "prev" ? "page-flip-prev" : "page-fade-in"
-              }`}
-            >
+            <div className="relative">
               <Image
                 src={`/quran/${String(leftPageNumber).padStart(3, "0")}.png`}
                 alt={`Quran Page ${leftPageNumber}`}
@@ -209,11 +225,7 @@ export default function QuranPage() {
             </div>
 
             {/* Right Page */}
-            <div
-              className={`relative ${
-                flipDirection === "next" ? "page-flip-next" : "page-fade-in"
-              }`}
-            >
+            <div className="relative">
               <Image
                 src={`/quran/${String(rightPageNumber).padStart(3, "0")}.png`}
                 alt={`Quran Page ${rightPageNumber}`}
@@ -244,11 +256,33 @@ export default function QuranPage() {
         )}
       </div>
 
-      {/* Navigation Arrows - Fixed positions */}
+      {/* Preload adjacent pages (hidden) */}
+      <div className="hidden">
+        {currentPage > 1 && (
+          <Image
+            src={`/quran/${String(currentPage - 1).padStart(3, "0")}.png`}
+            alt=""
+            width={800}
+            height={1200}
+            loading="eager"
+          />
+        )}
+        {currentPage < TOTAL_PAGES && (
+          <Image
+            src={`/quran/${String(currentPage + 1).padStart(3, "0")}.png`}
+            alt=""
+            width={800}
+            height={1200}
+            loading="eager"
+          />
+        )}
+      </div>
+
+      {/* Navigation Arrows - Lower position */}
       <button
         onClick={nextPage}
         disabled={currentPage >= TOTAL_PAGES || isAnimating}
-        className="fixed left-4 top-1/2 -translate-y-1/2 p-3 bg-background/80 backdrop-blur-sm rounded-full shadow-lg disabled:opacity-30 disabled:cursor-not-allowed hover:bg-accent transition-all z-20"
+        className="fixed left-4 bottom-32 p-3 bg-background/80 backdrop-blur-sm rounded-full shadow-lg disabled:opacity-30 disabled:cursor-not-allowed hover:bg-accent transition-all z-20"
         aria-label="Next page"
       >
         <ChevronLeft className="w-6 h-6" />
@@ -257,7 +291,7 @@ export default function QuranPage() {
       <button
         onClick={previousPage}
         disabled={currentPage <= 1 || isAnimating}
-        className="fixed right-4 top-1/2 -translate-y-1/2 p-3 bg-background/80 backdrop-blur-sm rounded-full shadow-lg disabled:opacity-30 disabled:cursor-not-allowed hover:bg-accent transition-all z-20"
+        className="fixed right-4 bottom-32 p-3 bg-background/80 backdrop-blur-sm rounded-full shadow-lg disabled:opacity-30 disabled:cursor-not-allowed hover:bg-accent transition-all z-20"
         aria-label="Previous page"
       >
         <ChevronRight className="w-6 h-6" />

@@ -102,26 +102,26 @@
   perspective-origin: center;
 }
 
-/* Page flip animations - realistic 3D book effect */
-@keyframes pageFlipNext {
-  0% {
-    transform: rotateY(0deg);
-    transform-origin: left center;
+/* Page slide animations for RTL */
+@keyframes slideInFromLeft {
+  from {
+    transform: translateX(-100%);
+    opacity: 0;
   }
-  100% {
-    transform: rotateY(-180deg);
-    transform-origin: left center;
+  to {
+    transform: translateX(0);
+    opacity: 1;
   }
 }
 
-@keyframes pageFlipPrev {
-  0% {
-    transform: rotateY(0deg);
-    transform-origin: right center;
+@keyframes slideInFromRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
   }
-  100% {
-    transform: rotateY(180deg);
-    transform-origin: right center;
+  to {
+    transform: translateX(0);
+    opacity: 1;
   }
 }
 
@@ -135,13 +135,11 @@
 }
 
 .page-flip-next {
-  animation: pageFlipNext 0.8s cubic-bezier(0.645, 0.045, 0.355, 1);
-  transform-style: preserve-3d;
+  animation: slideInFromLeft 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .page-flip-prev {
-  animation: pageFlipPrev 0.8s cubic-bezier(0.645, 0.045, 0.355, 1);
-  transform-style: preserve-3d;
+  animation: slideInFromRight 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .page-fade-in {
