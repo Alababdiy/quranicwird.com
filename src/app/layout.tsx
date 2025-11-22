@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { InstallPrompt } from "@/components/install-prompt";
+import { IOSInstallPrompt } from "@/components/ios-install-prompt";
 
 export const metadata: Metadata = {
   title: "Quranic Wird",
@@ -42,6 +43,7 @@ export default function RootLayout({
         >
           {children}
           <InstallPrompt />
+          <IOSInstallPrompt />
         </ThemeProvider>
       </body>
     </html>

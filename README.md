@@ -138,4 +138,6 @@ This project is open source and available for Islamic educational purposes.
 
 ## Credits
 
+- **Quran Images**: Thanks to [GovarJabbar/Quran-PNG](https://github.com/GovarJabbar/Quran-PNG) for providing high-quality Quran page images
+
 Built with ❤️ for the Muslim community
