@@ -46,20 +46,6 @@ export default function QuranPage() {
   useEffect(() => {
     setMounted(true);
 
-    // Request fullscreen on mount for mobile app feel
-    const requestFullscreen = async () => {
-      try {
-        if (document.documentElement.requestFullscreen) {
-          await document.documentElement.requestFullscreen();
-          setIsFullscreen(true);
-        }
-      } catch (err) {
-        console.log("Fullscreen request failed:", err);
-      }
-    };
-
-    requestFullscreen();
-
     // Hide controls after 3 seconds
     const timer = setTimeout(() => {
       setShowControls(false);
@@ -138,30 +124,6 @@ export default function QuranPage() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [nextPage, previousPage]);
 
-  // Touch handling for swipe
-  const [touchStart, setTouchStart] = useState(0);
-  const [touchEnd, setTouchEnd] = useState(0);
-
-  const handleTouchStart = (e: React.TouchEvent) => {
-    setTouchStart(e.targetTouches[0].clientX);
-  };
-
-  const handleTouchMove = (e: React.TouchEvent) => {
-    setTouchEnd(e.targetTouches[0].clientX);
-  };
-
-  const handleTouchEnd = () => {
-    if (touchStart - touchEnd > 75) {
-      // Swipe left - previous page
-      previousPage();
-    }
-
-    if (touchStart - touchEnd < -75) {
-      // Swipe right - next page
-      nextPage();
-    }
-  };
-
   const toggleTheme = () => {
     setTheme(theme === "dark" ? "light" : "dark");
   };
@@ -183,16 +145,12 @@ export default function QuranPage() {
       }
     };
 
-    // Preload next and previous pages
-    preloadImage(currentPage - 1);
-    preloadImage(currentPage + 1);
-
-    // For wide screen, preload 2 more pages
-    if (isWideScreen) {
-      preloadImage(currentPage + 2);
-      preloadImage(currentPage - 2);
+    // Preload 3 next and 3 previous pages
+    for (let i = 1; i <= 3; i++) {
+      preloadImage(currentPage - i);
+      preloadImage(currentPage + i);
     }
-  }, [currentPage, isWideScreen]);
+  }, [currentPage]);
 
   if (!mounted) {
     return null;
@@ -212,9 +170,6 @@ export default function QuranPage() {
       <div
         className="flex items-center justify-center min-h-screen p-4 cursor-pointer book-container"
         onClick={toggleControls}
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd}
       >
         {showTwoPages ? (
           <div className="page-spread w-full px-8 page-fade-in">
@@ -263,26 +218,34 @@ export default function QuranPage() {
         )}
       </div>
 
-      {/* Preload adjacent pages (hidden) */}
+      {/* Preload adjacent pages (hidden) - 3 pages in each direction */}
       <div className="hidden">
-        {currentPage > 1 && (
-          <Image
-            src={`/quran/${String(currentPage - 1).padStart(3, "0")}.png`}
-            alt=""
-            width={800}
-            height={1200}
-            loading="eager"
-          />
-        )}
-        {currentPage < TOTAL_PAGES && (
-          <Image
-            src={`/quran/${String(currentPage + 1).padStart(3, "0")}.png`}
-            alt=""
-            width={800}
-            height={1200}
-            loading="eager"
-          />
-        )}
+        {[1, 2, 3].map((offset) => (
+          <div key={`preload-prev-${offset}`}>
+            {currentPage - offset >= 1 && (
+              <Image
+                src={`/quran/${String(currentPage - offset).padStart(3, "0")}.png`}
+                alt=""
+                width={800}
+                height={1200}
+                loading="eager"
+              />
+            )}
+          </div>
+        ))}
+        {[1, 2, 3].map((offset) => (
+          <div key={`preload-next-${offset}`}>
+            {currentPage + offset <= TOTAL_PAGES && (
+              <Image
+                src={`/quran/${String(currentPage + offset).padStart(3, "0")}.png`}
+                alt=""
+                width={800}
+                height={1200}
+                loading="eager"
+              />
+            )}
+          </div>
+        ))}
       </div>
 
       {/* Navigation Arrows - Bottom on mobile, lower third on desktop */}
