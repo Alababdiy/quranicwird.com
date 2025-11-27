@@ -23,9 +23,6 @@ export default function QuranPage() {
   const [mounted, setMounted] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [showControls, setShowControls] = useState(true);
-  const [flipDirection, setFlipDirection] = useState<"next" | "prev" | null>(
-    null
-  );
   const [isAnimating, setIsAnimating] = useState(false);
   const [isWideScreen, setIsWideScreen] = useState(false);
 
@@ -78,18 +75,17 @@ export default function QuranPage() {
   };
 
   const navigateToPage = useCallback(
-    (newPage: number, direction: "next" | "prev") => {
+    (newPage: number) => {
       if (newPage < 1 || newPage > TOTAL_PAGES || isAnimating) return;
 
       setIsAnimating(true);
-      setFlipDirection(direction);
+      const pageNum = String(newPage).padStart(3, "0");
+      router.push(`/page/${pageNum}`);
 
+      // Reset animation state quickly
       setTimeout(() => {
-        const pageNum = String(newPage).padStart(3, "0");
-        router.push(`/page/${pageNum}`);
-        setFlipDirection(null);
         setIsAnimating(false);
-      }, 350);
+      }, 50);
     },
     [router, isAnimating]
   );
@@ -97,13 +93,13 @@ export default function QuranPage() {
   const nextPage = useCallback(() => {
     // In 2-page mode, jump by 2 pages
     const increment = isWideScreen ? 2 : 1;
-    navigateToPage(currentPage + increment, "next");
+    navigateToPage(currentPage + increment);
   }, [currentPage, isWideScreen, navigateToPage]);
 
   const previousPage = useCallback(() => {
     // In 2-page mode, jump by 2 pages
     const decrement = isWideScreen ? 2 : 1;
-    navigateToPage(currentPage - decrement, "prev");
+    navigateToPage(currentPage - decrement);
   }, [currentPage, isWideScreen, navigateToPage]);
 
   // Keyboard navigation
@@ -172,7 +168,7 @@ export default function QuranPage() {
         onClick={toggleControls}
       >
         {showTwoPages ? (
-          <div className="page-spread w-full px-8 page-fade-in">
+          <div className="page-spread w-full px-8 page-transition">
             {/* Left Page */}
             <div className="relative">
               <Image
@@ -200,11 +196,7 @@ export default function QuranPage() {
             </div>
           </div>
         ) : (
-          <div
-            className={`relative w-full max-w-2xl ${
-              flipDirection === "next" ? "page-flip-next" : ""
-            } ${flipDirection === "prev" ? "page-flip-prev" : ""}`}
-          >
+          <div className="relative w-full max-w-2xl page-transition">
             <Image
               src={`/quran/${pageNumber}.png`}
               alt={`Quran Page ${currentPage}`}
