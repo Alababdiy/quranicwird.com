@@ -120,6 +120,30 @@ export default function QuranPage() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [nextPage, previousPage]);
 
+  // Touch handling for swipe gestures
+  const [touchStart, setTouchStart] = useState(0);
+  const [touchEnd, setTouchEnd] = useState(0);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchEnd = () => {
+    if (touchStart - touchEnd > 75) {
+      // Swipe left - previous page (RTL)
+      previousPage();
+    }
+
+    if (touchStart - touchEnd < -75) {
+      // Swipe right - next page (RTL)
+      nextPage();
+    }
+  };
+
   const toggleTheme = () => {
     setTheme(theme === "dark" ? "light" : "dark");
   };
@@ -166,6 +190,9 @@ export default function QuranPage() {
       <div
         className="flex items-center justify-center min-h-screen p-4 cursor-pointer book-container"
         onClick={toggleControls}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
       >
         {showTwoPages ? (
           <div className="page-spread w-full px-8 page-transition">
