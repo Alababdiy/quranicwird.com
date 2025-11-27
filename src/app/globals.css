@@ -102,26 +102,8 @@
   perspective-origin: center;
 }
 
-/* Smooth scrolling page transitions for RTL */
-@keyframes scrollFromLeft {
-  from {
-    transform: translateX(-100%);
-  }
-  to {
-    transform: translateX(0);
-  }
-}
-
-@keyframes scrollFromRight {
-  from {
-    transform: translateX(100%);
-  }
-  to {
-    transform: translateX(0);
-  }
-}
-
-@keyframes fadeIn {
+/* Smooth page fade transition */
+@keyframes smoothFadeIn {
   from {
     opacity: 0;
   }
@@ -130,16 +112,8 @@
   }
 }
 
-.page-flip-next {
-  animation: scrollFromLeft 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-
-.page-flip-prev {
-  animation: scrollFromRight 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-
-.page-fade-in {
-  animation: fadeIn 0.25s ease-out;
+.page-transition {
+  animation: smoothFadeIn 0.2s ease-out;
 }
 
 /* Image inversion for dark mode */
