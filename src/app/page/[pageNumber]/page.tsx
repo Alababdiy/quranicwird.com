@@ -11,8 +11,10 @@ import {
   Minimize,
   Sun,
   Moon,
+  BookOpen,
 } from "lucide-react";
 import { useTheme } from "next-themes";
+import { QuranIndex } from "@/components/quran-index";
 
 const TOTAL_PAGES = 604;
 
@@ -25,6 +27,7 @@ export default function QuranPage() {
   const [showControls, setShowControls] = useState(true);
   const [isAnimating, setIsAnimating] = useState(false);
   const [isWideScreen, setIsWideScreen] = useState(false);
+  const [showIndex, setShowIndex] = useState(false);
 
   const pageNumber = params.pageNumber as string;
   const currentPage = parseInt(pageNumber);
@@ -315,6 +318,14 @@ export default function QuranPage() {
             </button>
 
             <button
+              onClick={() => setShowIndex(true)}
+              className="p-2 hover:bg-accent rounded-full transition-colors"
+              aria-label="Open Quran index"
+            >
+              <BookOpen className="w-5 h-5" />
+            </button>
+
+            <button
               onClick={toggleFullscreen}
               className="p-2 hover:bg-accent rounded-full transition-colors"
               aria-label="Toggle fullscreen"
@@ -350,6 +361,13 @@ export default function QuranPage() {
           </div>
         </div>
       </div>
+
+      {/* Quran Index Modal */}
+      <QuranIndex
+        isOpen={showIndex}
+        onClose={() => setShowIndex(false)}
+        currentPage={currentPage}
+      />
     </div>
   );
 }
