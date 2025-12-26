@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import { X, Book, BookOpen } from "lucide-react";
+import { X, Book, BookOpen, Search } from "lucide-react";
 import quranData from "@/data/quran-index.json";
 
 interface QuranIndexProps {
@@ -14,14 +14,43 @@ interface QuranIndexProps {
 export function QuranIndex({ isOpen, onClose, currentPage }: QuranIndexProps) {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<"surahs" | "juz">("surahs");
+  const [searchQuery, setSearchQuery] = useState("");
 
-  if (!isOpen) return null;
+  // Filter surahs based on search query
+  const filteredSurahs = useMemo(() => {
+    if (!searchQuery.trim()) return quranData.surahs;
+
+    const query = searchQuery.toLowerCase().trim();
+    return quranData.surahs.filter((surah) => {
+      return (
+        surah.nameAr.includes(query) ||
+        surah.nameEn.toLowerCase().includes(query) ||
+        surah.number.toString().includes(query) ||
+        surah.juz.toString().includes(query)
+      );
+    });
+  }, [searchQuery]);
+
+  // Filter juz based on search query
+  const filteredJuz = useMemo(() => {
+    if (!searchQuery.trim()) return quranData.juz;
+
+    const query = searchQuery.toLowerCase().trim();
+    return quranData.juz.filter((j) => {
+      return (
+        j.nameAr.includes(query) ||
+        j.number.toString().includes(query)
+      );
+    });
+  }, [searchQuery]);
 
   const goToPage = (page: number) => {
     const pageNum = String(page).padStart(3, "0");
     router.push(`/page/${pageNum}`);
     onClose();
   };
+
+  if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
@@ -39,6 +68,20 @@ export function QuranIndex({ isOpen, onClose, currentPage }: QuranIndexProps) {
           >
             <X className="w-5 h-5" />
           </button>
+        </div>
+
+        {/* Search Bar */}
+        <div className="p-4 border-b border-border">
+          <div className="relative">
+            <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+            <input
+              type="text"
+              placeholder="ابحث عن سورة أو جزء..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pr-10 pl-4 py-2 bg-accent/50 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-right"
+            />
+          </div>
         </div>
 
         {/* Tabs */}
@@ -69,7 +112,8 @@ export function QuranIndex({ isOpen, onClose, currentPage }: QuranIndexProps) {
         <div className="flex-1 overflow-y-auto p-4">
           {activeTab === "surahs" ? (
             <div className="grid gap-2">
-              {quranData.surahs.map((surah) => (
+              {filteredSurahs.length > 0 ? (
+                filteredSurahs.map((surah) => (
                 <button
                   key={surah.number}
                   onClick={() => goToPage(surah.page)}
@@ -92,11 +136,18 @@ export function QuranIndex({ isOpen, onClose, currentPage }: QuranIndexProps) {
                     ص {surah.page}
                   </div>
                 </button>
-              ))}
+                ))
+              ) : (
+                <div className="text-center py-8 text-muted-foreground">
+                  <Search className="w-12 h-12 mx-auto mb-2 opacity-50" />
+                  <p>لا توجد نتائج للبحث</p>
+                </div>
+              )}
             </div>
           ) : (
             <div className="grid gap-2">
-              {quranData.juz.map((j) => (
+              {filteredJuz.length > 0 ? (
+                filteredJuz.map((j) => (
                 <button
                   key={j.number}
                   onClick={() => goToPage(j.startPage)}
@@ -121,7 +172,13 @@ export function QuranIndex({ isOpen, onClose, currentPage }: QuranIndexProps) {
                     ص {j.startPage} - {j.endPage}
                   </div>
                 </button>
-              ))}
+                ))
+              ) : (
+                <div className="text-center py-8 text-muted-foreground">
+                  <Search className="w-12 h-12 mx-auto mb-2 opacity-50" />
+                  <p>لا توجد نتائج للبحث</p>
+                </div>
+              )}
             </div>
           )}
         </div>
